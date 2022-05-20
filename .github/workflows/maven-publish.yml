@@ -7,7 +7,7 @@ on:
 #   push:
 #     branches: [ dev, qa, master ]
   pull_request:
-    branches: [ master, dev, qa ]
+    branches: [ master, qa ]
 
 jobs:
   build:
@@ -23,27 +23,19 @@ jobs:
         distribution: 'adopt'
         cache: maven
     
-#     - name: Code style check
-#       uses: sarnold/cccc-action@main
-#       with:
-#         github_token: ${{ secrets.GITHUB_TOKEN }}
-
-#     - name: upload metrics report
-#       uses: actions/upload-artifact@v2
-#       with:
-#         name: metrics
-#         path: ./metrics
     - name: Code check
       uses: dbelyaev/action-checkstyle@v0.5.1
       with:
         github_token: ${{ secrets.github_token }}
         reporter: github-pr-review
         level: warning
+        
     - name: Build with Maven
       run: |
            mvn -B package --file pom.xml
            mkdir artifacts && cp target/*.jar artifacts
            cd artifacts && ls
+           
     - name: Save artifact 
       uses: actions/upload-artifact@v2
       with:
